@@ -1,6 +1,6 @@
 // $Id$
 /*
- * Copyright (c) 2012 Karl Bunch
+ * Copyright (c) 2012 Karl Bunch <http://www.karlbunch.com/>
  *  
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,18 @@
  *      
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/  
+ */  
 
 importPackage(Packages.java.io);
 importPackage(Packages.java.awt);
 importPackage(Packages.com.sk89q.worldedit);
 importPackage(Packages.com.sk89q.worldedit.blocks);
 
-context.checkArgs(1, -1, "[h] <block1> <block2> [<block3> ... <blockN>]\n  h = (optional) Horizontal bias to pattern.");
+var usage = "[h] <block1> [#x]<block2> [<block3> ... <blockN>]\n"
+          + " h = (optional) horizontal bias to pattern.\n"
+          + " #x = (optional) repeat factor for a block.\n";
+
+context.checkArgs(1, -1, usage + "\n /" + argv[0] + " help - for more help.\n");
 
 // Setup code to run in a function for easy exit (return) etc.
 function main() {
@@ -31,6 +35,11 @@ function main() {
   var region = session.getRegion();
   var pattern = new Array;
   var bias = 'v';
+  var reRepeat = /([\d+])[x#](.*)/i;
+
+  // Handle help request
+  if(argv[1] == 'help')
+    return help();
 
   // Check args for flag
   var i = 1;
@@ -39,9 +48,30 @@ function main() {
     bias = 'h';
   }
 
+  // Default repeat is 1
+  var repeat = 1;
+
   // Rest of args are blocks
   for(;i < argv.length;i++) {
-    pattern[pattern.length] = context.getBlock(argv[i]);
+    var block = argv[i];
+
+    // Did they include a repeat factor?
+    if((m = reRepeat.exec(block)) != null) {
+      // Extract repeat and optional block name
+      repeat = m[1];
+      block = m[2];
+
+      // If there is no block name then just loop to next arg
+      if(block == '')
+        continue;
+    }
+
+    // Inject these blocks with optional repeat
+    while(repeat-- > 0)
+      pattern[pattern.length] = context.getBlock(block);
+
+    // Reset to defalut repeat of 1
+    repeat = 1;
   }
 
   // Walk the region and set blocks to the pattern
@@ -71,6 +101,22 @@ function main() {
   }
 
   return;
+}
+
+function help() {
+  var cmd = '/' + argv[0];
+
+  context.print("Usage: " + cmd + " " + usage + "\n"
+    + "Use " + cmd + " to create a pattern in the selected region.\n"
+    + "You can specify a list of blocks for the pattern.\n"
+    + "Each block can have an optional repeat factor.\n"
+    + "\n"
+    + "Examples:\n"
+    + " " + cmd + " red 3x green - 1 red, 3 green blocks\n"
+    + " " + cmd + " 2xstone 4x air 3#wood - 2 stone, 4 air, 3 wood blocks \n"
+ );
+
+ return;
 }
 
 // Run the actual script
