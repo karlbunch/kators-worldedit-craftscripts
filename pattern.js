@@ -21,9 +21,12 @@ importPackage(Packages.java.awt);
 importPackage(Packages.com.sk89q.worldedit);
 importPackage(Packages.com.sk89q.worldedit.blocks);
 
-var usage = "[h] <block1> [#x]<block2> [<block3> ... <blockN>]\n"
-          + " h = (optional) horizontal bias to pattern.\n"
-          + " #x = (optional) repeat factor for a block.\n";
+var usage = "[h] [=blk1[,blk2,...]] <block1> [#x]<block2> [<block3> ... <blockN>]\n"
+	  + "Block can be `skip` to skip a location in the pattern.\n"
+          + "Optional args:\n"
+          + " h - horizontal bias to pattern.\n"
+          + " =[blk1[,blk2,...] - only replace blocks of blk1...\n"
+          + " #x - repeat factor for a block.\n";
 
 context.checkArgs(1, -1, usage + "\n /" + argv[0] + " help - for more help.\n");
 
@@ -34,45 +37,62 @@ function main() {
   var session = context.getSession();
   var region = session.getRegion();
   var pattern = new Array;
+  var replace = new Array;
   var bias = 'v';
   var reRepeat = /([\d+])[x#](.*)/i;
+  var reReplace = /^=(.*)/;
 
   // Handle help request
   if(argv[1] == 'help')
     return help();
 
-  // Check args for flag
+  // Check args for flag(s)
   var i = 1;
-  if (argv[i] == 'h') {
-    i++;
-    bias = 'h';
-  }
+  for(;i < argv.length;i++)
+    if (argv[i] == 'h') {
+      bias = 'h';
+    } else if((m = reReplace(argv[i])) != null) {
+      var blks = m[1].split(',');
 
-  // Default repeat is 1
-  var repeat = 1;
+      for(var j = 0;j < blks.length;j++) {
+        replace[replace.length] = context.getBlock(blks[j]);
+      }
+    } else
+      break;
 
   // Rest of args are blocks
-  for(;i < argv.length;i++) {
+  for(var repeat = 1;i < argv.length;i++) {
     var block = argv[i];
 
     // Did they include a repeat factor?
-    if((m = reRepeat.exec(block)) != null) {
+    if ((m = reRepeat.exec(block)) != null) {
       // Extract repeat and optional block name
       repeat = m[1];
       block = m[2];
 
       // If there is no block name then just loop to next arg
-      if(block == '')
+      if (block == '')
         continue;
     }
 
     // Inject these blocks with optional repeat
     while(repeat-- > 0)
-      pattern[pattern.length] = context.getBlock(block);
+      pattern[pattern.length] = (block == '+' || block == 'skip') ? '+' : context.getBlock(block);
 
     // Reset to defalut repeat of 1
     repeat = 1;
   }
+
+  var s = 'Replace: ';
+  for(var k = 0;k < replace.length;k++) {
+    s += replace[k].getType() + " ";
+  }
+  player.print(s);
+  var s = 'Pattern: ';
+  for(var k = 0;k < pattern.length;k++) {
+    s += " " + (pattern[k] == '+' ? "<skip>" : pattern[k].getType());
+  }
+  player.print(s);
 
   // Walk the region and set blocks to the pattern
   var i = 0;
@@ -83,7 +103,7 @@ function main() {
     for(var h = 0;h < region.getHeight();h++) {
       for(var l = 0;l < region.getLength();l++) {
 	for(var w = 0;w < region.getWidth();w++) {
-	  blocks.setBlock(origin.add(w, h, l), pattern[i++]);
+	  replaceBlock(blocks, origin.add(w, h, l), pattern[i++], replace);
 	  i %= pattern.length;
 	}
       }
@@ -93,7 +113,7 @@ function main() {
     for(var l = 0;l < region.getLength();l++) {
       for(var w = 0;w < region.getWidth();w++) {
         for(var h = 0;h < region.getHeight();h++) {
-	  blocks.setBlock(origin.add(w, h, l), pattern[i++]);
+	  replaceBlock(blocks, origin.add(w, h, l), pattern[i++], replace);
 	  i %= pattern.length;
 	}
       }
@@ -103,17 +123,41 @@ function main() {
   return;
 }
 
+function replaceBlock(blocks, pt, blkId, replace) {
+  // Skip this block if user asked to skip in the pattern
+  if(blkId == '+')
+    return;
+
+  // If no replace blocks were passed then just always set the block
+  if(replace.length == 0)
+    return blocks.setBlock(pt, blkId);
+
+  // get the current block at this pt
+  var b = blocks.getBlock(pt);
+
+  // If it's in the list replace it...
+  for(var k = 0;k < replace.length;k++)
+    if(b.getType() == replace[k].getType())
+      return blocks.setBlock(pt, blkId);
+
+  return false;
+}
+
 function help() {
   var cmd = '/' + argv[0];
 
   context.print("Usage: " + cmd + " " + usage + "\n"
     + "Use " + cmd + " to create a pattern in the selected region.\n"
     + "You can specify a list of blocks for the pattern.\n"
-    + "Each block can have an optional repeat factor.\n"
+    + "#xBlockid - optional repeat factor.\n"
+    + "`skip` - skip changes to blocks at that point in the pattern.\n"
+    + "={block list} - Restrict changes to only matching blocks.\n"
     + "\n"
     + "Examples:\n"
-    + " " + cmd + " red 3x green - 1 red, 3 green blocks\n"
-    + " " + cmd + " 2xstone 4x air 3#wood - 2 stone, 4 air, 3 wood blocks \n"
+    + " " + cmd + " red 3x green - 1 red, 3 green\n"
+    + " " + cmd + " 2xstone 4x air 3#wood - 2 stone, 4 air, 3 wood\n"
+    + " " + cmd + " =0,8,9 stonebrick 4x skip - Replace 0,8,9\n"
+    + "           with stonebrick skipping 4 bricks between each.\n"
  );
 
  return;
