@@ -34,6 +34,7 @@ function main() {
   var target = player.getPlayer();
   var repeat = parseInt(argv[1]);
   var cmds = argv.slice(2).join(' ').split(';');
+  var reCraftscript = /^\S+\.js\s/;
 
   // Run the commands
   while(repeat > 0) {
@@ -44,6 +45,10 @@ function main() {
 
       // If there is still a command to run send it to the client..
       if(cmd != '') {
+	// Craftscript.js ... needs to be cs Craftscript.js ...
+	if(reCraftscript.exec(cmd))
+	  cmd = 'cs ' + cmd;
+
         player.print(repeat + ") " + cmd + "\n");
         target.performCommand(cmd);
       }
