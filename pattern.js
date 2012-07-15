@@ -83,17 +83,6 @@ function main() {
     repeat = 1;
   }
 
-  var s = 'Replace: ';
-  for(var k = 0;k < replace.length;k++) {
-    s += replace[k].getType() + " ";
-  }
-  player.print(s);
-  var s = 'Pattern: ';
-  for(var k = 0;k < pattern.length;k++) {
-    s += " " + (pattern[k] == '+' ? "<skip>" : pattern[k].getType());
-  }
-  player.print(s);
-
   // Walk the region and set blocks to the pattern
   var i = 0;
   var origin = region.getMinimumPoint();
