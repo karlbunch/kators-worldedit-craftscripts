@@ -17,7 +17,7 @@ if [ ! -f ".git/hooks/post-merge" ]; then
     ln -vs "../../link" ".git/hooks/post-merge"
 fi
 
-SCRIPTS=$(echo *.js)
+SCRIPTS=$(echo *.js *.sh)
 
 echo "Linking scripts to $DIR"
 cd ..
