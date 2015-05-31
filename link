@@ -12,6 +12,11 @@ if [ "X$DIR" == "X.git" ]; then
   DIR=$(basename $PWD)
 fi
 
+if [ ! -f ".git/hooks/post-merge" ]; then
+    echo "Installing post-merge hook"
+    ln -vs "../../link" ".git/hooks/post-merge"
+fi
+
 SCRIPTS=$(echo *.js)
 
 echo "Linking scripts to $DIR"
