@@ -13,6 +13,17 @@ Running the 'link' script will setup a post-merge hook to run it on future updat
 
 See: http://wiki.sk89q.com/wiki/WorldEdit/Scripting for details on setting up your server to run craftscripts.
 
+## Installing
+
+Make sure you have the Rhino js.jar in the plugins/WorldEdit directory and have WorldEdit setup properly.
+
+```
+cd {minecraft-server-path}/plugins/WorldEdit/craftscripts
+git git clone git@github.com:karlbunch/kators-worldedit-craftscripts.git
+cd cd kators-worldedit-craftscripts
+./link
+```
+
 ## Examples:
 
 ### Run a villager census in the selected region
