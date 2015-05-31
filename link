@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DIR=$(basename $PWD)
+
+if [ "X$DIR" == "X.git" ]; then
+  cd ..
+  DIR=$(basename $PWD)
+fi
+
+SCRIPTS=$(echo *.js)
+
+echo "Linking scripts to $DIR"
+cd ..
+for i in $SCRIPTS
+do
+  rm -f $i > /dev/null 2>&1
+  ln -vs $DIR/$i .
+done
+
+exit 0
