@@ -1,4 +1,3 @@
-// $Id$
 /*
  * Copyright (c) 2012 Karl Bunch <http://www.karlbunch.com/>
  *  
