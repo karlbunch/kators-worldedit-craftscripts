@@ -24,6 +24,8 @@ cd cd kators-worldedit-craftscripts
 ./link
 ```
 
+See http://wiki.sk89q.com/wiki/WorldEdit/Scripting/Development for documentation on how to write scripts.
+
 ## Examples:
 
 ### Run a villager census in the selected region
