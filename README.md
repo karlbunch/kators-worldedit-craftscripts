@@ -9,7 +9,7 @@ Install the scripts in your {minecraft-server-path}/plugins/WorldEdit/craftscrip
 
 If you install in {minecraft-server-path}/plugins/WorldEdit/craftscripts/reponame you can use the 'link' script to make symbolic links to the parent directory so WorldEdit will find the scripts along with other scripts you might already have.
 
-Running the link script will setup a post-merge hook to run it on future updates to make sure new scripts are linked into the parent directory properly.
+Running the 'link' script will setup a post-merge hook to run it on future updates to make sure new scripts are linked into the parent directory properly.
 
 See: http://wiki.sk89q.com/wiki/WorldEdit/Scripting for details on setting up your server to run craftscripts.
 
