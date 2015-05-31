@@ -15,10 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */  
 
-importPackage(Packages.java.io);
-importPackage(Packages.java.awt);
 importPackage(Packages.com.sk89q.worldedit);
-importPackage(Packages.com.sk89q.worldedit.localworld);
 
 var usage = "### command[;command;command;...]"
           + " ### = Number of times to run the commands.\n";
@@ -30,7 +27,7 @@ function main() {
   if(argv[1] == "help")
     return help();
 
-  var target = player.getPlayer();
+  var target = WorldEdit.getInstance().getServer().matchPlayer(player).getPlayer();
   var repeat = parseInt(argv[1]);
   var cmds = argv.slice(2).join(' ').split(';');
   var reCraftscript = /^\S+\.js\s/;
