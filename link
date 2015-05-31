@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# link - Link scripts into parent directory
+#
+# Assuming you have checked out in plugings/WorldEdit/craftscripts/kators-worldedit-craftscripts
+#
 
 DIR=$(basename $PWD)
 
