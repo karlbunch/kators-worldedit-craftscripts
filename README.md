@@ -7,7 +7,7 @@ You need to have a working copy of Rhino on the server.
 
 Install the scripts in your {minecraft-server-path}/plugins/WorldEdit/craftscripts directory.
 
-If you install in {minecraft-server-path}/plugins/WorldEdit/craftscripts/reponame you can use the 'link' script to make symbolic links to the main directory.
+If you install in {minecraft-server-path}/plugins/WorldEdit/craftscripts/reponame you can use the 'link' script to make symbolic links to the parent directory so WorldEdit will find the scripts along with other scripts you might already have.
 
 See: http://wiki.sk89q.com/wiki/WorldEdit/Scripting for details on setting up your server to run craftscripts.
 
