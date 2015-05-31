@@ -24,6 +24,15 @@ cd cd kators-worldedit-craftscripts
 ./link
 ```
 
+## Updating
+
+You can use:
+```
+/pull.js
+```
+
+To run a git pull on your server.  If this makes you uncomfortable (maybe it should) you should disable this by renaming pull.js to pull.js-disabled.  It won't work unless you have your ssh keys setup and the actual git repo is under your craftscript folder.  The Javascript calls git-pull.sh which is simple enough to audit if you're concerned about security.  For a family server this is not a big deal but could be a big deal if you allow public logins.
+
 See http://wiki.sk89q.com/wiki/WorldEdit/Scripting/Development for documentation on how to write scripts.
 
 ## Examples:
